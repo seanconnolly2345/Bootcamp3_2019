@@ -36,10 +36,10 @@ exports.create = function(req, res) {
   }
  
   /* Then save the listing */
-  listing.save(function(err) {
-    if(err) {
-      console.log(err);
-      res.status(400).send(err);
+  listing.save(function(e) {
+    if(e) {
+      console.log(e);
+      res.status(404).send(e);
     } else {
       res.json(listing);
       console.log(listing)
@@ -55,27 +55,59 @@ exports.read = function(req, res) {
 
 /* Update a listing - note the order in which this function is called by the router*/
 exports.update = function(req, res) {
+  
   var listing = req.listing;
 
-  /* Replace the listings's properties with the new properties found in req.body */
- 
-  /*save the coordinates (located in req.results if there is an address property) */
- 
-  /* Save the listing */
+  listing.name = req.body.name;
+  listing.code = req.body.code;
+  listing.address = req.body.address;
+  
+  listing.coordinates = { latitude: req.body.latitude, longitude: req.body.longitude }
+  listing.save(function(e) {
+    if (e) {
+      res.status(404).send(e);
+      console.log("Could not save: ", e);
+    } 
+    else
+    {
+      res.json(listing);
+      console.log("Saved Sucessfully");
+    }
+})
 
 };
 
 /* Delete a listing */
 exports.delete = function(req, res) {
   var listing = req.listing;
-
-  /* Add your code to remove the listins */
+  
+  listing.remove(function(e){ 
+  if (e){
+      res.status(400).send(e); 
+      console.log("Error Deleting Listing ", e); 
+    return;
+  }
+  else{
+      res.end();
+      console.log("Removal Successful");
+  }
+  })
 
 };
 
 /* Retreive all the directory listings, sorted alphabetically by listing code */
 exports.list = function(req, res) {
-  /* Add your code */
+  mongoose.model('Listing', Listing.listingSchema).find({}, function(e, listings){ // Gets all listings 
+    if (e){
+      res.status(404).send(e); 
+      console.log("Error retrieving full directory ", e); 
+      return;
+  }
+  else{
+    res.json(listings); //Outputs retrieved listings 
+    console.log("Retrieved"); 
+  }
+  })  
 };
 
 /* 
