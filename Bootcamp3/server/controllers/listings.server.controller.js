@@ -114,10 +114,6 @@ exports.list = function(req, res) {
 
 /* 
   Middleware: find a listing by its ID, then pass it to the next request handler. 
-
-  HINT: Find the listing using a mongoose query, 
-        bind it to the request object as the property 'listing', 
-        then finally call next
  */
 exports.listingByID = function(req, res, next, id) {
   Listing.findById(id).exec(function(e, listing) {
