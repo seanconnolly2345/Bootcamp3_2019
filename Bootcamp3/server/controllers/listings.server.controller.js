@@ -63,6 +63,8 @@ exports.update = function(req, res) {
   listing.address = req.body.address;
   
   listing.coordinates = { latitude: req.body.latitude, longitude: req.body.longitude }
+  
+  
   listing.save(function(e) {
     if (e) {
       res.status(404).send(e);
@@ -83,7 +85,7 @@ exports.delete = function(req, res) {
   
   listing.remove(function(e){ 
   if (e){
-      res.status(400).send(e); 
+      res.status(404).send(e); 
       console.log("Error Deleting Listing ", e); 
     return;
   }
@@ -118,9 +120,9 @@ exports.list = function(req, res) {
         then finally call next
  */
 exports.listingByID = function(req, res, next, id) {
-  Listing.findById(id).exec(function(err, listing) {
-    if(err) {
-      res.status(400).send(err);
+  Listing.findById(id).exec(function(e, listing) {
+    if(e) {
+      res.status(404).send(e);
     } else {
       req.listing = listing;
       next();
